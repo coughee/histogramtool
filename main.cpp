@@ -44,7 +44,7 @@ int main(int argc, char **argv){
   if( min < 0){
     min = 0;
   }
-  
+  cout << min << "\t" << max << endl;
   Histogram<double> hist = Histogram<double>(10, min, max, "");
   for(int i = 0; i < temp.size(); i++){
     hist.addValue(temp[i]);

@@ -39,11 +39,11 @@ class Histogram
   void printGraphical();
  private:
   void addHistValueOnly(T value);
-  
   std::string header;
   int nBins;
   T min;
   T max;
+
   double binSize;
   long int count;
   std::vector<T> values;
@@ -89,7 +89,7 @@ Histogram<T>::Histogram(int nBins, T min, T max, std::string header){
   this->binSize = (this->max - this->min)/(T)this->nBins;
   for(int i = 0; i < nBins; i++){
     this->values[i] = 0;
-    this->index[i] = (i + 1)*this->binSize;
+    this->index[i] = (i + 1)*this->binSize + this->min;
   }
   this->header = header;
   this->count = 0;
@@ -108,7 +108,7 @@ int Histogram<T>::getLocation(T value){
     return -1;
   }
 
- return (int)floor(value / this->binSize);
+ return (int)floor((value - this->min) / this->binSize);
 }
 
 template <class T>
