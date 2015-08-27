@@ -1,2 +1,2 @@
 all:
-	g++  main.cpp Histogram.h -o hist
+	g++  -O3 main.cpp Histogram.h -o hist
