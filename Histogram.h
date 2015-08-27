@@ -6,6 +6,9 @@
 #include <string>
 #include <cmath>
 #include <fstream>
+#include <typeinfo>
+#include <stdexcept>
+#include <algorithm>
 
 template <class T>
 class Histogram
@@ -14,8 +17,8 @@ class Histogram
   Histogram<T>(int nBins, T min, T max, std::string header);
   Histogram<T>(int nBins, T min, T max, std::string header, std::string filename);
   ~Histogram<T>() {}
-  Histogram<T>& operator=(Histogram<T> rhs);
-
+  Histogram<T> operator=(Histogram<T> rhs);
+  Histogram<T>(const Histogram<T> &other);
   //Calculation
   double getAverage();
   double getStdDev();
@@ -44,7 +47,7 @@ class Histogram
   T min;
   T max;
 
-  double binSize;
+  T binSize;
   long int count;
   std::vector<T> values;
   std::vector<T> rawData;
@@ -89,7 +92,7 @@ Histogram<T>::Histogram(int nBins, T min, T max, std::string header){
   this->binSize = (this->max - this->min)/(T)this->nBins;
   for(int i = 0; i < nBins; i++){
     this->values[i] = 0;
-    this->index[i] = (i + 1)*this->binSize + this->min;
+    this->index[i] = (T)(i + 1)*this->binSize + this->min;
   }
   this->header = header;
   this->count = 0;
@@ -107,8 +110,9 @@ int Histogram<T>::getLocation(T value){
     //    std::cout << "ERROR: value " << value << " out of range." << std::endl;
     return -1;
   }
+ int rval = (int)floor((value - this->min) / this->binSize);
 
- return (int)floor((value - this->min) / this->binSize);
+ return rval;
 }
 
 template <class T>
@@ -226,8 +230,46 @@ double Histogram<T>::calculateBinCost(Histogram<T> tHist){
   av /= tHist.nBins;
   avsq /= tHist.nBins;
   avsq -= av*av; 
-  return (2*av - avsq)/(tHist.binSize*tHist.binSize);
+  return (2*av - avsq)/((double)tHist.binSize*tHist.binSize);
   
+}
+template <>
+int Histogram<int>::optimisedBinNum(){
+  int curGuess = 2;
+  int binInc = (int)round(curGuess/2);
+  double curCost;
+
+  Histogram<int> hHist(*this);
+  Histogram<int> lHist(*this);
+  hHist.reBinData(curGuess);
+  curCost = this->calculateBinCost(hHist);
+
+  double lcost, hcost;
+  double prevCost = curCost;
+  int bestGuess = curGuess;
+  double bestCost = curCost;
+
+  
+
+  while(curGuess < (this->max - this->min)){
+    curGuess += 1;
+
+    if((int)(this->max - this->min) % curGuess == 0){
+      std::cout << "rebinning data" << std::endl;
+      hHist.reBinData(curGuess);
+      std::cout << "done" << std::endl;
+      prevCost = curCost;
+      std::cout << "Calc bin cost" << std::endl;
+      curCost = calculateBinCost(hHist);
+      std::cout << "done" << std::endl;
+      if(curCost < bestCost){
+	bestGuess = curGuess;
+	bestCost = curCost;
+      }
+    }
+  }
+
+   return bestGuess;
 }
 
 template <class T>
@@ -236,42 +278,16 @@ int  Histogram<T>::optimisedBinNum(){
   int binInc = (int)round(curGuess/2);
   double curCost;
 
-  Histogram<T> hHist = *this;
-  Histogram<T> lHist = *this;
+  Histogram<T> hHist(*this);
+  
   hHist.reBinData(curGuess);
   curCost = this->calculateBinCost(hHist);
 
   double lcost, hcost;
-  
-
-
-/*   while (binInc > 1){ */
-
-/*     std::cout << curGuess << "\t" << binInc << std::endl; */
-/*     hHist.reBinData(curGuess + binInc); */
-/*     lHist.reBinData(curGuess - binInc); */
-
-/*     lcost = calculateBinCost(lHist); */
-/*     hcost = calculateBinCost(hHist); */
-
-/*     if(lcost <= curCost){ */
-/*       curGuess -= binInc; */
-/*       curCost = lcost; */
-/*     } */
-/*     else if (hcost < curCost){ */
-/*       curGuess += binInc; */
-/*       curCost = hcost; */
-/*     } */
-/*     else{ */
-/*       return curGuess; */
-/*     } */
-/*     binInc = (int)round(binInc/2); */
-    
-/*   } */
-
   double prevCost = curCost;
   int bestGuess = curGuess;
   double bestCost = curCost;
+
   while(curGuess < (this->max - this->min)){
     curGuess += 1;
     hHist.reBinData(curGuess);
@@ -281,29 +297,42 @@ int  Histogram<T>::optimisedBinNum(){
       bestGuess = curGuess;
       bestCost = curCost;
     }
-  }
-  return bestGuess;
+
+   }
+   return bestGuess;
 }
 
 template <class T>
 void Histogram<T>::reBinData(int numBins){
-  values.resize(0);
-  index.resize(0);
-    
-    
+  // values.clear();
+  // index.clear();
+  std::vector<T> valuestemp;
+  std::vector<T> indextemp;
   this->nBins = numBins;
-  this->binSize = (this->max - this->min)/(double)this->nBins;
+  this->binSize = (this->max - this->min)/static_cast<T>(this->nBins);
+
 
   for(int i = 0; i < this->nBins; i++){
-    this->values.push_back(0);
-    this->index.push_back((i + 1)*this->binSize + this->min);
+    valuestemp.push_back(0);
+    indextemp.push_back((T)((i + 1)*this->binSize) + (T)this->min);
   }
+
+
+  std::copy(valuestemp.begin(), valuestemp.end(), values.begin());
+  std::copy(indextemp.begin(), indextemp.end(), index.begin());
   this->count = 0;
   this->accu = 0;
+
   this->accusq = 0;
+
+
+
   for(int i = 0; i < this->rawData.size(); i++){
     this->addHistValueOnly(this->rawData[i]);
   }
+
+  std::cout << "done inside rebindata" << std::endl;
+  
 }
 
 template <class T>
@@ -318,9 +347,23 @@ void Histogram<T>::addHistValueOnly(T value){
   this->accusq += value*value;
 }
 
-
 template <class T>
-Histogram<T>& Histogram<T>::operator=(const Histogram<T> rhs){
+Histogram<T>::Histogram(const Histogram<T> &other){
+  this->values = other.values;
+  this->rawData = other.rawData;
+  this->index = index;
+  this->nBins = other.nBins;
+  this->accu = other.accu;
+  this->accusq = other.accusq;
+  this->min = other.min;
+  this->max = other.max;
+  this->binSize = other.binSize;
+  this->header = other.header;
+  this->count = other.count;
+
+}
+template <class T>
+Histogram<T> Histogram<T>::operator=(const Histogram<T> rhs){
   this->values = rhs.values;
   this->rawData = rhs.rawData;
   this->index = index;
