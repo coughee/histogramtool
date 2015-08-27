@@ -296,7 +296,7 @@ void Histogram<T>::reBinData(int numBins){
 
   for(int i = 0; i < this->nBins; i++){
     this->values.push_back(0);
-    this->index.push_back((i + 1)*this->binSize);
+    this->index.push_back((i + 1)*this->binSize + this->min);
   }
   this->count = 0;
   this->accu = 0;

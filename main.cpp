@@ -37,13 +37,11 @@ int main(int argc, char **argv){
     if(max < x){
       max = x;
     }
-    if(x < min && x >= 0){
+    if(x < min){
       min = x;
     }
   }
-  if( min < 0){
-    min = 0;
-  }
+
   Histogram<double> hist = Histogram<double>(10, min, max, "");
   for(int i = 0; i < temp.size(); i++){
     hist.addValue(temp[i]);
