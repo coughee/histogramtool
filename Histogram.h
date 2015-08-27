@@ -74,7 +74,7 @@ Histogram<T>::Histogram(int nBins, T min, T max,
   this->binSize = (double)(this->max - this->min)/(double)this->nBins;
   for(int i = 0; i < nBins; i++){
     this->values[i] = 0;
-    this->index[i] = (i + 1)*this->binSize;
+    this->index[i] = (i + 1)*this->binSize + this->min;
   }
   this->header = header;
   this->count = 0;
@@ -109,7 +109,7 @@ int Histogram<T>::getLocation(T value){
     if(value == this->max){
       return values.size() - 1;
     }
-    std::cout << "ERROR: value " << value << " out of range." << std::endl;
+    std::cout << "ERROR: value " << value << " out of range." << this->max << std::endl;
     return -1;
   }
  int rval = (int)floor((value - this->min) / this->binSize);
@@ -351,7 +351,7 @@ template <class T>
 void Histogram<T>::printGraphical(){
   for(int i = 0; i < values.size(); i++){
     if(i == 0){
-      std::cout << "[0 - " << index[i] << "]\t";
+      std::cout << "[" << this->min << " - " << index[i] << "]\t";
     }
     else {
       std::cout << "[" << index[i - 1] << " - " << index[i] << "]\t";

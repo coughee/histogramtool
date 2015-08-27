@@ -35,6 +35,7 @@ int main(int argc, char **argv){
   cin >> x;
   temp.push_back(x);
   min = x;
+  max = x;
   while(cin >> x){
     temp.push_back(x);
     if(max < x){
