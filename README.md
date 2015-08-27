@@ -21,7 +21,7 @@ Would result in the output like:
 The program finds the optimal bin width to accurately represent data with multiple peaks.
 
 ##options
--g	Turns graphical mode on, the histogram is displayed in the commandline using o as the marker e.g
+-g	Turns graphical mode on, the histogram is displayed in the command line using o as the marker e.g
 
     [0 - 1]	oo  
     [1 - 2] oooooo  
