@@ -7,12 +7,14 @@
 using namespace std;
 
 int main(int argc, char **argv){
-  double x;
+
   bool setGraphical = false;
+
   for(int i = 0; i < argc; i++){
     if(std::string(argv[i]) == "-g"){
       setGraphical = true;
     }
+
     if(std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help"){
       cout << "Command line tool for calculating histograms.\n\n";
       cout << "Finds the optimal bin width using the method\n";
@@ -24,14 +26,15 @@ int main(int argc, char **argv){
     }
   }
   
-  vector<double> temp;
 
+
+  vector<double> temp;
   double min = 0;
   double max = 0;
+  double x;
   cin >> x;
   temp.push_back(x);
   min = x;
-    
   while(cin >> x){
     temp.push_back(x);
     if(max < x){
@@ -40,8 +43,8 @@ int main(int argc, char **argv){
     if(x < min){
       min = x;
     }
+   
   }
-
   Histogram<double> hist = Histogram<double>(10, min, max, "");
   for(int i = 0; i < temp.size(); i++){
     hist.addValue(temp[i]);
@@ -54,5 +57,9 @@ int main(int argc, char **argv){
   else{
     hist.print();
   }
+
+
+    
+
   return 0;
 }
