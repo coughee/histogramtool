@@ -108,7 +108,7 @@ int Histogram<T>::getLocation(T value){
     return -1;
   }
 
- return (int)floor((value - this->min) / this->binSize);
+ return (int)round((value - this->min) / this->binSize);
 }
 
 template <class T>
