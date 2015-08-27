@@ -9,14 +9,11 @@ Would find the optimal bin width for the data and bin it accordingly, outputting
 ##options
 -g	Turns graphical mode on, the histogramis displayed in the commandline using o as the marker e.g\n\n
 
-[0 - 1]	oo\n
-[1 - 2] oooooo\n
-[2 - 3] ooooo\n
-[3 - 4] oooo\n
-[4 - 5] ooo
-
-
+[0 - 1]	oo  
+[1 - 2] oooooo  
+[2 - 3] ooooo  
+[3 - 4] oooo  
+[4 - 5] ooo  
 
 ##Building
-
 You should just be able to type make to build.
