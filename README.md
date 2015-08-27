@@ -2,14 +2,26 @@
 Commandline tool for histograming data. Finds the optimal bin width for the data. Histogram.h can also be used as a general histogramming header file in c++ applications.
 
 ##Usage
-Assuming data is a file of values:
+Assuming data is a file of values e.g.  
   
-cat data | histogramtool
+1.0
+2.0
+3.0
   
-Would find the optimal bin width for the data and bin it accordingly, outputting the histogram as tab delimited data with column 1 being the maximum bin value and column 2 being the frequency.
+Then using command:  
+  
+cat data | hist
+  
+Would result in the output like:  
+  
+1.0   1
+2.0   1
+3.0   1
+
+The program finds the optimal bin width to accurately represent data with multiple peaks.
 
 ##options
--g	Turns graphical mode on, the histogramis displayed in the commandline using o as the marker e.g
+-g	Turns graphical mode on, the histogram is displayed in the commandline using o as the marker e.g
 
 [0 - 1]	oo  
 [1 - 2] oooooo  
