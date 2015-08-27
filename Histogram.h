@@ -36,6 +36,7 @@ class Histogram
   void writeRawDataToFile(std::string outputfile);
   void readFromFile(std::string fileName);
   void print();
+  void printGraphical();
  private:
   void addHistValueOnly(T value);
   
@@ -336,4 +337,19 @@ Histogram<T>& Histogram<T>::operator=(const Histogram<T> rhs){
   return *this;
 }
 
+template <class T>
+void Histogram<T>::printGraphical(){
+  for(int i = 0; i < values.size(); i++){
+    if(i == 0){
+      std::cout << "[0 - " << index[i] << "]\t";
+    }
+    else {
+      std::cout << "[" << index[i - 1] << " - " << index[i] << "]\t";
+    }
+    for(int j = 0; j < values[i]; j++){
+      std::cout << "o";
+    }
+    std::cout << std::endl;
+  }
+}
 #endif

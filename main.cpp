@@ -3,12 +3,26 @@
 #include <stdlib.h>
 #include "Histogram.h"
 #include <vector>
-
+#include <string>
 using namespace std;
 
 int main(int argc, char **argv){
   double x;
-  
+  bool setGraphical = false;
+  for(int i = 0; i < argc; i++){
+    if(std::string(argv[i]) == "-g"){
+      setGraphical = true;
+    }
+    if(std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help"){
+      cout << "Command line tool for calculating histograms.\n\n";
+      cout << "Finds the optimal bin width using the method\n";
+      cout << "detailed by Shimazaki and Shinomoto.\n\n\n";
+      cout << "Command line options:\n\n";
+      cout << "-g\tEnable graphical mode, prints\n";
+      cout << "\thistogram to command line graphically.\n\n";
+      return 0;
+    }
+  }
   
   vector<double> temp;
 
@@ -37,7 +51,11 @@ int main(int argc, char **argv){
   }
   int opBinNum = hist.optimisedBinNum();
   hist.reBinData(opBinNum);
-  hist.print();
-
+  if(setGraphical){
+    hist.printGraphical();
+  }
+  else{
+    hist.print();
+  }
   return 0;
 }
