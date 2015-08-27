@@ -27,7 +27,7 @@ The program finds the optimal bin width to accurately represent data with multip
     [1 - 2] oooooo  
     [2 - 3] ooooo  
     [3 - 4] oooo  
-   [4 - 5] ooo  
+    [4 - 5] ooo  
 
 ##Building
 You should just be able to type make to build.
